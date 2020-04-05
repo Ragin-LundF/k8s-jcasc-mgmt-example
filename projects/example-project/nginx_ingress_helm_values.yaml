@@ -1,5 +1,6 @@
 k8sJenkinsMgmt:
     ingress:
+        annotationIngressClass:
         namespace: example-project
         loadbalancerIp: 192.168.178.240
         deploymentName: nginx-ingress 
@@ -10,7 +11,8 @@ k8sJenkinsMgmt:
         controllerForNamespace:
             enabled: false
     loadbalancer:
-        enabled: false 
+        enabled: false
+ 
         ports:
             http:
                 port: 80 
