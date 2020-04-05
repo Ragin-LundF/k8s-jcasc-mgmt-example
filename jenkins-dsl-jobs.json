@@ -1,3 +1,15 @@
 {
-  "multiBranchJobs": []
+  "multiBranchJobs": [
+    {
+      "jobName": "myMultibranchJob",
+      "jobDescription": "This is a test job",
+      "pipelineScriptPath": "Jenkinsfile",
+      "git": {
+        "repositoryId": "myMultibranchJobId",
+        "repositoryUrl": "https://github.com/myProjects/myMultibranchProject.git",
+        "repositoryTrigger": "* * * * *",
+        "credentialsId": "myGitCredentialsId"
+      }
+    }
+  ]
 }
