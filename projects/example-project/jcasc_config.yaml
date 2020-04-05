@@ -212,7 +212,7 @@ jobs:
           multiscm {
               git {
                   remote {
-                      url('https://github.com/Ragin-LundF/jenkins-jobdsl-seed-script.git')
+                      url('https://github.com/Ragin-LundF/jenkins-jobdsl-remote.git')
                   }
                   extensions {
                     relativeTargetDirectory('jobdslscript')
