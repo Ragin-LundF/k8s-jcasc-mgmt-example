@@ -213,7 +213,6 @@ jobs:
               git {
                   remote {
                       url('https://github.com/Ragin-LundF/jenkins-jobdsl-seed-script.git')
-                      credentials("vcs-notification-credentialsid")
                   }
                   extensions {
                     relativeTargetDirectory('jobdslscript')
@@ -222,7 +221,6 @@ jobs:
               git {
                   remote {
                       url('https://github.com/Ragin-LundF/k8s-jcasc-mgmt-example.git')
-                      credentials("vcs-notification-credentialsid")
                   }
                   extensions {
                     relativeTargetDirectory('jobdefinition')
