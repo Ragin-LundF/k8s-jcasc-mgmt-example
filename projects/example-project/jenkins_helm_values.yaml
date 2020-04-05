@@ -55,7 +55,7 @@ master:
   sidecars:
     configAutoReload:
       # folder in the pod that should hold the collected dashboards:
-      folder: "https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-project-config/master/example-project/jcasc_config.yaml"
+      folder: "https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-mgmt-example/master/projects/example-project/jcasc_config.yaml"
 
 persistence:
   existingClaim:  
