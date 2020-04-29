@@ -1,6 +1,40 @@
 jenkins:
   systemMessage: "Welcome to the k8s-jcasc-mgmt example"
 
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            description: "Jenkins administrators"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+          - name: "readonly"
+            description: "Read-only users"
+            permissions:
+              - "Overall/Read"
+              - "Job/Read"
+            assignments:
+              - "authenticated"
+        items:
+          - name: "Project User"
+            description: "User for the project"
+            pattern: ".*"
+            permissions:
+              - "Job/Build"
+            assignments:
+              - "project-user"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "#jbcrypt:$2a$04$UNxiNvJN6R3me9vybVQr/OzpMhgobih8qbxDpGy3lZmmmwc6t48ty"
+        - id: "project-user"
+          password: "#jbcrypt:$2a$04$BFPq6fSa9KGKrlIktz/C8eSFrrG/gglnW1eXWMSjgtCSx36mMOSNm"
+
   clouds:
     - kubernetes:
         name: "jenkins-build-slaves"
@@ -230,7 +264,7 @@ jobs:
           steps {
               dsl {
                   lookupStrategy('SEED_JOB')
-                  external('jobdslscript/JenkinsJobDslRemote.groovy')
+                  external('jobdslscript/src/JenkinsJobDslRemote.groovy')
               }
           }
           triggers {

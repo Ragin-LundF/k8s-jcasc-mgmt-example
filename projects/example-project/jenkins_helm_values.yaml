@@ -14,15 +14,13 @@ master:
       <authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy">
         <denyAnonymousReadAccess>false</denyAnonymousReadAccess>
       </authorizationStrategy>
-  # Define a admin password here. Normally it does not matter who has access, because settings can be reloaded from the repository.
-  # But for security reasons try to use a password, that is not easy and avoid to give anonymous read access to the project where Jenkins is located.
-  adminPassword: "admin"
   # We do not want to execute Jenkins as root. The Jenkins container are using 1000:1000 as jenkins:jenkins user/group
   runAsUser: 1000
   fsGroup: 1000
   # because we want to "proxy" jenkins via ingress routing, we have to set the Uri Prefix here
   jenkinsUriPrefix: "/jenkins"
   installPlugins:
+    - authorize-project:latest
     - blueocean:latest
     - blueocean-bitbucket-pipeline:latest
     - configuration-as-code:latest
@@ -38,6 +36,7 @@ master:
     - metrics:latest
     - multiple-scms:latest
     - pipeline-config-history:latest
+    - role-strategy:latest
     - sonar:latest
     - ssh-agent:latest
     - stashNotifier:latest
