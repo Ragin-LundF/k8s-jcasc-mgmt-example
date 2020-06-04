@@ -5,6 +5,8 @@ master:
   imagePullSecretName:  
   # need 1 executor as default to execute the seed job
   numExecutors: 1
+  # must be exclusive for jobs distribution
+  executorMode: "EXCLUSIVE"
   # give a custom label to the master instance, that the seed job can run in it
   customJenkinsLabels: [
     "jenkins-master-for-seed"
@@ -72,8 +74,7 @@ serviceAccountAgent:
   # Specifies whether a ServiceAccount should be created
   create: true
 
-# Additional k8s-management configurations (requiring changes in the original helm files of Jenkins)
-k8sJenkinsMgmtExtension:
-  jenkins:
-    # available modes are: EXCLUSIVE (to execute only exclusive labeled jobs) or NORMAL (which will prioritize the Jenkins Master)
-    mode: "EXCLUSIVE"
+k8smanagement:
+  rbac:
+    # list of additional namespaces that should be deployable (adds RBAC roles to those namespaces)
+    additionalNamespaces: {}
