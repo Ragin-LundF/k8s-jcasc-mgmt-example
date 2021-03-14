@@ -1,22 +1,25 @@
 k8sJenkinsMgmt:
-    ingress:
-        annotationIngressClass:
-        namespace: example-project
-        loadbalancerIp: 192.168.178.240
-        deploymentName: nginx-ingress 
-        jenkinsDeploymentName: jenkins-master
-        jenkinsUriPrefix: /jenkins
-        containerImage: bitnami/nginx-ingress-controller:latest
-        imagePullSecrets:  
-        controllerForNamespace:
-            enabled: false
-    loadbalancer:
-        enabled: false
- 
-        ports:
-            http:
-                port: 80 
-                targetPort: 80 
-            https:
-                port: 443 
-                targetPort: 443 
+  ingress:
+    annotationIngressClass: nginx
+    namespace: example-project
+    loadbalancerIp: 192.168.178.253
+    deploymentName: nginx-ingress
+    jenkinsDeploymentName: jenkins-controller
+    jenkinsUriPrefix: /jenkins
+    containerImage: bitnami/nginx-ingress-controller:latest
+    imagePullSecrets: 
+    controllerForNamespace:
+      enabled: true
+  loadbalancer:
+    enabled: true
+    ports:
+      http:
+        port: 80
+        targetPort: 80
+      https:
+        port: 443
+        targetPort: 443
+    annotations:
+      enabled: false
+      external_dns_hostname: "192.168.178.253"
+      external_dns_ttl: 60

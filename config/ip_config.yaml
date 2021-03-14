@@ -1,0 +1,6 @@
+k8sManagement:
+    ipconfig:
+        deployments:
+            - ipAddress: 192.168.178.253
+              namespace: example-project
+              domain: example-projectdomain.tld

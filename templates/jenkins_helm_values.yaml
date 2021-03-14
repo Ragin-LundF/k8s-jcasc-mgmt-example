@@ -1,10 +1,10 @@
 controller:
   # Used for label app.kubernetes.io/component
-  componentName: "jenkins-controller"
-  image: "jenkins/jenkins"
-  tag: "lts"
-  imagePullPolicy: "Always"
-  imagePullSecretName: 
+  componentName: "{{ .Base.DeploymentName }}"
+  image: "{{ .JenkinsHelmValues.Controller.Image }}"
+  tag: "{{ .JenkinsHelmValues.Controller.Tag }}"
+  imagePullPolicy: "{{ .JenkinsHelmValues.Controller.ImagePullPolicy }}"
+  imagePullSecretName: {{ .JenkinsHelmValues.Controller.ImagePullSecretName }}
   # need 1 executor as default to execute the seed job
   numExecutors: 1
   # must be exclusive for jobs distribution
@@ -12,13 +12,13 @@ controller:
 
   # give a custom label to the controller instance, that the seed job can run in it
   customJenkinsLabels: [
-    "jenkins-controller-for-seed"
+    "{{ .JenkinsHelmValues.Controller.CustomJenkinsLabels }}"
   ]
   # Define a admin password here. Normally it does not matter who has access, because settings can be reloaded from the repository.
   # But for security reasons try to use a password, that is not easy and avoid to give anonymous read access to the project where Jenkins is located.
-  adminPassword: "admin"
+  adminPassword: "{{ .JenkinsHelmValues.Controller.AdminPassword }}"
   # because we want to "proxy" jenkins via ingress routing, we have to set the Uri Prefix here
-  jenkinsUriPrefix: "/jenkins"
+  jenkinsUriPrefix: "{{ .Base.JenkinsUriPrefix }}"
   installPlugins:
     - authorize-project:latest
     - blueocean:latest
@@ -53,17 +53,17 @@ controller:
     # Define, if we want to allow anonymous read access
     authorizationStrategy: |-
       loggedInUsersCanDoAnything:
-        allowAnonymousRead: true
+        allowAnonymousRead: {{ .JenkinsHelmValues.Controller.AuthorizationStrategyAllowAnonymousRead }}
   sidecars:
     configAutoReload:
       # folder in the pod that should hold the collected dashboards:
-      folder: "https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-project-config/main/example-project/jcasc_config.yaml"
+      folder: "{{ .JenkinsHelmValues.Controller.SidecarsConfigAutoReloadFolder }}"
 
 persistence:
-  existingClaim: pvc-example-project
-  storageClass: hostpath
-  accessMode: ReadWriteOnce
-  size: 1Gi
+  existingClaim: {{ .Base.ExistingVolumeClaim }}
+  storageClass: {{ .JenkinsHelmValues.Persistence.StorageClass }}
+  accessMode: {{ .JenkinsHelmValues.Persistence.AccessMode }}
+  size: {{ .JenkinsHelmValues.Persistence.Size }}
 
 ## Install Default RBAC roles and bindings
 rbac:

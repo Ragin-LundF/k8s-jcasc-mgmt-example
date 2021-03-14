@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-example-project
+  namespace: example-project
+  labels:
+    "app.kubernetes.io/name": "jenkins-controller"
+    "app.kubernetes.io/component": "jenkins-controller"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: hostpath

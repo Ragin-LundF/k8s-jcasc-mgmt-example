@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Base.ExistingVolumeClaim }}
+  namespace: {{ .Base.Namespace }}
+  labels:
+    "app.kubernetes.io/name": "{{ .Base.DeploymentName }}"
+    "app.kubernetes.io/component": "{{ .Base.DeploymentName }}"
+spec:
+  accessModes:
+    - {{ .PersistentVolumeClaim.Spec.AccessMode }}
+  resources:
+    requests:
+      storage: {{ .PersistentVolumeClaim.Spec.Resources.StorageSize }}
+  storageClassName: {{ .PersistentVolumeClaim.Spec.StorageClassName }}
