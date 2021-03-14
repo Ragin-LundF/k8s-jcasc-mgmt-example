@@ -16,7 +16,7 @@ controller:
   ]
   # Define a admin password here. Normally it does not matter who has access, because settings can be reloaded from the repository.
   # But for security reasons try to use a password, that is not easy and avoid to give anonymous read access to the project where Jenkins is located.
-  adminPassword: "admin"
+  adminPassword:
   # because we want to "proxy" jenkins via ingress routing, we have to set the Uri Prefix here
   jenkinsUriPrefix: "/jenkins"
   installPlugins:
