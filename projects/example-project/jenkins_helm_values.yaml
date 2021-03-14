@@ -56,8 +56,9 @@ controller:
         allowAnonymousRead: true
   sidecars:
     configAutoReload:
+      enabled: false
       # folder in the pod that should hold the collected dashboards:
-      folder: "https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-project-config/main/example-project/jcasc_config.yaml"
+      folder: "https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-mgmt-example/main/projects/example-project/jcasc_config.yaml"
 
 persistence:
   existingClaim: pvc-example-project
