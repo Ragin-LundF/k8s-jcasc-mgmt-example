@@ -2,7 +2,7 @@ jenkins:
   jcasc:
     credentialIDs:
       vcs: ""
-    seedJobURL: "https://github.com/Ragin-LundF/k8s-jcasc-mgmt-example.git"
+    seedJobURL: "https://github.com/Ragin-LundF/jenkins-jobdsl-remote.git"
 
   jobDSL:
     baseURL: "https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-mgmt-example/main/projects/"
