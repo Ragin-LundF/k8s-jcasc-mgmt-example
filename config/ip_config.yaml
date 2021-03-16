@@ -3,4 +3,7 @@ k8sManagement:
         deployments:
             - ipAddress: 192.168.178.253
               namespace: example-project
-              domain: example-projectdomain.tld
+              domain: example-project.domain.tld
+            - ipAddress: 192.168.178.252
+              namespace: example-project-dynamic
+              domain: example-project.domain.tld

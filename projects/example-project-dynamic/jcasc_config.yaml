@@ -1,0 +1,209 @@
+jenkins:
+  systemMessage: "Welcome to Jenkins"
+
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            description: "Jenkins administrators"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+          - name: "readonly"
+            description: "Read-only users"
+            permissions:
+              - "Overall/Read"
+              - "Job/Read"
+            assignments:
+              - "authenticated"
+        items:
+          - name: "Project User"
+            description: "User for the project"
+            pattern: ".*"
+            permissions:
+              - "Job/Build"
+            assignments:
+              - "project-user"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "#jbcrypt:$2a$04$UNxiNvJN6R3me9vybVQr/OzpMhgobih8qbxDpGy3lZmmmwc6t48ty"
+        - id: "project-user"
+          password: "#jbcrypt:$2a$04$BFPq6fSa9KGKrlIktz/C8eSFrrG/gglnW1eXWMSjgtCSx36mMOSNm"
+
+  clouds:
+    - kubernetes:
+        name: "jenkins-build-slaves"
+        serverUrl: ""
+        serverCertificate: LS0tLS1DeUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM3akNDQWRhZ0F4SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFvTVJJd0VBWURWUVFLRXdsMGFHVXQKY21GdVkyZ3hFakFRQmdOVkJBTVRDV05oZEhSc1pTMWpZVEFlRncweE9URXdNalV3TnpNMU5UaGFGdzB5T1RFdwpNakl3TnpNMU5UaGFNQ2d4RWpBUUJnTlZCQW9UQ1hSb1pTMXlZVzVqYURFU01CQUdBMVVFQXhNSlkyRjBkR3hsCkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZmSU5NdFJCN1liRzVvbEsKL0lpckdFZlZVbWxhZXcyR0RzMm5od2NOZC9Ha09NdmVMdThySDUzdUMwRm1QTXYvd21CdWRKMGJ0anF3RldxQgpubHlVL0VPQWhzeUN3Z1FFeE0xY2ZmQTUzRDZlQncyVHVsZ3ZudTNoYzRmbmZvTEdVbUNyTVNiVXplMjBncm43CjI4UWdmcXBxcVRQMm42b21OUzlLSm9obmp4VDZpaVVYZExwS29nNEhhcndiUVNmdmdnWHFrTGNRVmpucjllWkYKTEhGY1hpanpVK1pES3BIT2tyNGlsc1FiOFhiT2xpK01Sa0p2OWVOdEhYajRoeVFYakpBdHdzUUhTeXdja1lYUQpGUFRFQi9IejBQUUJpTC9jaTk0dGUrWHRSNDJMNFgrZlh2eUpIOGFNQ09VMTZkaEhuUjBxOW1jLzJjTlZMYjJ0CmxOWWVWUUlEQVFBQm95TXdJVEFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QU4KQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBZ3UzSDVkRHA5d0FNZlg0V0pUSWlEGUxjTU0wSElkMFJGbDhaTU9oUgowRTB0YnUrbkduaHh0d3lIMUE5UFRjRm9pU3h1THNNNktrSWNZL1ZLallqRnBPemxXZVJuVW12WnpTdDkyaTRuCjRoa2duA8ZEa1l6bzVPb1FEF21nRXhFVlpsRnJKaXFZYjYwR3Z6Q0RHblZUc3ljT2xqaVJmeGdWSFQvR8t6bkEKbG9scTY4Z2VlVGFZMWZjdWZTK3FPcHBKcm9CNjZvZENtenhuMExVZE4yRU9ucDJYZUdIZ0hjRzRFcFVXODdXcQpJZVZTTkY3SDFIYVlqY0Z2ZD3SZHFseVVpRjkvaWwxMFJYVHTSbzNPa3loZ3BzWnPUNWRBTk9jOXA0M0MKNHF0CjNwZDJvN2hHRGxVc3g4cFpsaZZHamo4ZA8rVy9qRXY1K1VTQzVPQ09kRHJJU2c9PQotLS0tLUVORCBDRVJUSUZMR0FUSS0tBT0t
+        directConnection: false
+        skipTlsVerify: true
+        namespace: "example-project-dynamic"
+        jenkinsUrl: "http://jenkins-controller:8080"
+        maxRequestsPerHostStr: 64
+        retentionTimeout: 5
+        connectTimeout: 10
+        readTimeout: 20
+        templates:
+
+          # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
+          # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
+          # this POD.
+          - name: "pipeline-base-container"
+            serviceAccount: "jenkins-controller-agent"
+            instanceCap: 10
+            idleMinutes: 0
+            slaveConnectTimeout: "500"
+            label: "pipeline-base-container"
+            imagePullSecrets:
+              - name: docker-registry-credentialsid
+            # add the Docker sockets to the hostPathVolume, that we can use docker commands
+            volumes:
+              - hostPathVolume:
+                  mountPath: "/var/run/docker.sock"
+                  hostPath: "/var/run/docker.sock"
+            containers:
+              # If you want to have all deployed build container under your control, you need a JNLP container with the name "jnlp".
+              # This is required by the kubernetes plugin of Jenkins.
+              # By defining this container here and doing always an 'inheritFrom: "pipeline-base-container"', it is possible to add
+              # an own image here, that is located in an private registry to have the full control over the used containers and their versions.
+              - name: "jnlp"
+                image: "jenkins/jnlp-slave:latest"
+                privileged: false
+                alwaysPullImage: true
+                workingDir: "/home/jenkins/agent"
+                runAsUser: "1000"
+                runAsGroup: "1000"
+                command: ""
+                args: ""
+                ttyEnabled: true
+                resourceRequestCpu: "200m"
+                resourceLimitCpu: "500m"
+                resourceRequestMemory: "256Mi"
+                resourceLimitMemory: "1Gi"
+              # It is recommended to deploy Docker in a separate container, because it needs privileged execution and root.
+              # You also can try to bring the rootless container up to life, but this is more tricky.
+              # With this special configuration the other build containers do not need root or privileged deployments.
+              - name: "docker"
+                image: "docker:latest"
+                privileged: true
+                alwaysPullImage: true
+                workingDir: "/home/jenkins/agent"
+                runAsUser: "0"
+                runAsGroup: "0"
+                command: ""
+                args: ""
+                ttyEnabled: true
+                resourceRequestCpu: "500m"
+                resourceLimitCpu: "1500m"
+                resourceRequestMemory: "500Mi"
+                resourceLimitMemory: "2Gi"
+            # Those variables are required for the communication with the agents
+            envVars:
+              - envVar:
+                  key: "JENKINS_URL"
+                  value: "http://jenkins-controller:8080/jenkins"
+              - envVar:
+                  key: "JENKINS_TUNNEL"
+                  value: "jenkins-controller-agent:50000"
+
+# JcasC configuration for unclassified plugins
+unclassified:
+  # URL under which the Jenkins is reachable.
+  # This URL will also be used for notifying the VCS like Github or Bitbucket to link to build number results.
+  location:
+    url: "http://192.168.178.252/jenkins"
+
+  # Definition of the metrics plugin to monitor Jenkins via Prometheus
+  metricsaccesskey:
+    accessKeys:
+      - key: "a71f35bb-f65a-4085-b3a6-e1863a4784f8"
+        description: "API Token to access metrics with Prometheus"
+        canPing: true
+        canThreadDump: false
+        canHealthCheck: true
+        canMetrics: false
+        origins: "*"
+
+  # Definition of a global pipeline library
+  globalLibraries:
+    libraries:
+      # defaultVersion is the stable branch name
+      - defaultVersion: "main"
+        name: "my-pipeline-library"
+        implicit: false
+        allowVersionOverride: true
+        includeInChangesets: false
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                id: "my-pipeline-library"
+                remote: "https://github.com/Ragin-LundF/k8s-jcasc-pipeline-library.git"
+                credentialsId: "vcs-notification-credentialsid"
+
+  # Definition of a sonar server if required
+  sonarglobalconfiguration:
+    buildWrapperEnabled: true
+    installations:
+      - name: "SonarQube Server"
+        serverUrl: "https://sonar.company.net:9000"
+        serverAuthenticationToken: "mytoken"
+        credentialsId: token-sonarqube
+        webhookSecretId: webhook
+        mojoVersion: ""
+        additionalAnalysisProperties: ""
+        additionalProperties: ""
+        triggers:
+          envVar: ""
+          skipScmCause: false
+          skipUpstreamCause: false
+
+
+# JobDSL definition of the seed-job.
+# This job creates all other jobs from a Bitbucket repository.
+# With this mechanism, it is possible to have a simple job definition in your VCS and there is no need to make
+# backups of the jobs. Simply redeploy Jenkins and everything runs as before.
+# This job will also be used to add/delete jobs by simply adding new job definitions to the job file in this repository.
+jobs:
+  - script: >
+      job('seed_job') {
+          label('jenkins-controller-for-seed')
+          logRotator {
+              numToKeep(5)
+              artifactNumToKeep(1)
+          }
+          multiscm {
+              git {
+                  remote {
+                      url('https://github.com/Ragin-LundF/jenkins-jobdsl-remote.git')
+                      credentials("vcs-notification-credentialsid")
+                  }
+                  extensions {
+                    relativeTargetDirectory('jobdslscript')
+                  }
+              }
+              git {
+                  remote {
+                      url('https://github.com/Ragin-LundF/k8s-jcasc-mgmt-example.git')
+                      credentials("vcs-notification-credentialsid")
+                  }
+                  extensions {
+                    relativeTargetDirectory('jobdefinition')
+                  }
+              }
+          }
+          steps {
+              dsl {
+                  lookupStrategy('SEED_JOB')
+                  external('jobdslscript/JenkinsJobDslRemote.groovy')
+              }
+          }
+          triggers {
+              scm('* * * * *')
+          }
+      }

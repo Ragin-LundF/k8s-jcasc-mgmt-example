@@ -1,10 +1,10 @@
 base:
     deploymentName: jenkins-controller
     domain: external-domain.tld
-    existingVolumeClaim: pvc-example-project
+    existingVolumeClaim: pvc-example-project-dyn
     jenkinsURIPrefix: /jenkins
-    ipAddress: 192.168.178.253
-    namespace: example-project
+    ipAddress: 192.168.178.252
+    namespace: example-project-dynamic
 jcasc:
     clouds:
         kubernetes:

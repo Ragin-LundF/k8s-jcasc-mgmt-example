@@ -14,3 +14,10 @@ The `jenkins-dsl-jobs.json` file should be under control of the project develope
 
 In the `templates` directory is a copy of the original one and contains new/customized templates in the `cloud-templates` directory.
 If you want to use own or modified templates, you have to copy all of them into this directory, which is then under your control.
+
+The `projects` folder contains two examples of projects:
+
+- `example-project` is a project with saved value files, which can be modified manually
+- `example-project-dynamic` is a project which contains only the JCasC and the configuration file.
+  The Helm values files are generated on-the-fly from the configuration.
+  
