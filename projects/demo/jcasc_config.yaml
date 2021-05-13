@@ -65,7 +65,7 @@ jenkins:
             containers:
               # add container with the name 'gradle'. This can be used in the pipeline to execute commands on this container
               - name: "gradle"
-                image: "gradle:latest"
+                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-java-gradle:latest"
                 privileged: false
                 alwaysPullImage: true
                 workingDir: "/home/jenkins/agent"
@@ -101,7 +101,7 @@ jenkins:
               - name: docker-registry-credentialsid
             containers:
               - name: "node"
-                image: "node:latest"
+                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
                 privileged: false
                 alwaysPullImage: true
                 workingDir: "/home/jenkins/agent"
@@ -162,7 +162,7 @@ jenkins:
               # You also can try to bring the rootless container up to life, but this is more tricky.
               # With this special configuration the other build containers do not need root or privileged deployments.
               - name: "docker"
-                image: "docker:latest"
+                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-docker:latest"
                 privileged: true
                 alwaysPullImage: true
                 workingDir: "/home/jenkins/agent"

@@ -13,7 +13,7 @@
   containers:
     # add container with the name 'gradle'. This can be used in the pipeline to execute commands on this container
     - name: "gradle"
-      image: "docker pull ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-java-gradle:latest"
+      image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-java-gradle:latest"
       privileged: false
       alwaysPullImage: true
       workingDir: "/home/jenkins/agent"

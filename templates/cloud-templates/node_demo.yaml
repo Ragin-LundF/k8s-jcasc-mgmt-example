@@ -12,7 +12,7 @@
     - name: {{ .JCasc.CredentialIDs.DockerRegistryCredentialsID }}
   containers:
     - name: "node"
-      image: "node:latest"
+      image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
       privileged: false
       alwaysPullImage: true
       workingDir: "/home/jenkins/agent"
