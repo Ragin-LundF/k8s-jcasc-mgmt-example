@@ -1,0 +1,67 @@
+base:
+    deploymentName: jenkins-controller
+    domain: demodomain.tld
+    existingVolumeClaim: pvc-jenkins-demo
+    jenkinsURIPrefix: /jenkins
+    ipAddress: 10.15.15.1
+    namespace: demo
+jcasc:
+    clouds:
+        kubernetes:
+            templates:
+                additionalCloudTemplateFiles:
+                    - gradle_java_demo.yaml
+                    - node_demo.yaml
+    credentialIDs:
+        #docker: docker-registry-credentialsid
+        #maven: repository-credentialsid
+        #npm: repository-credentialsid
+        #vcs: vcs-notification-credentialsid
+    jobsConfig:
+        seedJobRepository: https://github.com/Ragin-LundF/jenkins-jobdsl-remote.git
+        jobsDefinitionRepository: https://github.com/Ragin-LundF/k8s-jcasc-mgmt-example.git
+    securityRealm:
+        localUsers:
+            adminPassword: $2a$04$UNxiNvJN6R3me9vybVQr/OzpMhgobih8qbxDpGy3lZmmmwc6t48ty
+            userPassword: $2a$04$BFPq6fSa9KGKrlIktz/C8eSFrrG/gglnW1eXWMSjgtCSx36mMOSNm
+    systemMessage: Welcome to the Demo
+jenkinsHelmValues:
+    controller:
+        image: jenkins/jenkins
+        tag: lts
+        imagePullPolicy: Always
+        customJenkinsLabel: jenkins-controller-for-seed
+        authorizationStrategyAllowAnonymousRead: "true"
+        adminPassword: admin
+        sidecarsConfigAutoReloadFolder: https://raw.githubusercontent.com/Ragin-LundF/k8s-jcasc-mgmt-example/main/projects/demo/jcasc_config.yaml
+    persistence:
+        accessMode: ReadWriteOnce
+        storageSize: 1Gi
+        storageClass: hostpath
+    additionalNamespaces:
+        - demo-dev
+        - demo-qa
+persistentVolumeClaim:
+    pvcSpec:
+        accessMode: ReadWriteOnce
+        storageClassName: hostpath
+        resources:
+            storageSize: 1Gi
+nginx:
+    ingress:
+        annotationIngressClass: nginx
+        deploymentName: nginx-ingress
+        containerImage: bitnami/nginx-ingress-controller:latest
+        enableControllerForNamespace: true
+    loadBalancer:
+        enabled: true
+        annotations:
+            externalDNSHostName: domain.tld
+            externalDNSTtl: 60
+        ports:
+            http:
+                port: 80
+                targetPort: 80
+            https:
+                port: 443
+                targetPort: 443

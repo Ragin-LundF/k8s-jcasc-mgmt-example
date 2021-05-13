@@ -1,5 +1,5 @@
 jenkins:
-  systemMessage: "{{ .JCasc.SystemMessage }}"
+  systemMessage: "Welcome to the Demo"
 
   authorizationStrategy:
     roleBased:
@@ -31,36 +31,109 @@ jenkins:
       allowsSignup: false
       users:
         - id: "admin"
-          password: "#jbcrypt:{{ .JCasc.SecurityRealm.LocalUsers.AdminPassword }}"
+          password: "#jbcrypt:$2a$04$UNxiNvJN6R3me9vybVQr/OzpMhgobih8qbxDpGy3lZmmmwc6t48ty"
         - id: "project-user"
-          password: "#jbcrypt:{{ .JCasc.SecurityRealm.LocalUsers.UserPassword }}"
+          password: "#jbcrypt:$2a$04$BFPq6fSa9KGKrlIktz/C8eSFrrG/gglnW1eXWMSjgtCSx36mMOSNm"
 
   clouds:
     - kubernetes:
         name: "jenkins-build-slaves"
         serverUrl: ""
-        serverCertificate: {{ .JCasc.Clouds.Kubernetes.ServerCertificate }}
+        serverCertificate: LS0tLS1DeUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM3akNDQWRhZ0F4SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFvTVJJd0VBWURWUVFLRXdsMGFHVXQKY21GdVkyZ3hFakFRQmdOVkJBTVRDV05oZEhSc1pTMWpZVEFlRncweE9URXdNalV3TnpNMU5UaGFGdzB5T1RFdwpNakl3TnpNMU5UaGFNQ2d4RWpBUUJnTlZCQW9UQ1hSb1pTMXlZVzVqYURFU01CQUdBMVVFQXhNSlkyRjBkR3hsCkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZmSU5NdFJCN1liRzVvbEsKL0lpckdFZlZVbWxhZXcyR0RzMm5od2NOZC9Ha09NdmVMdThySDUzdUMwRm1QTXYvd21CdWRKMGJ0anF3RldxQgpubHlVL0VPQWhzeUN3Z1FFeE0xY2ZmQTUzRDZlQncyVHVsZ3ZudTNoYzRmbmZvTEdVbUNyTVNiVXplMjBncm43CjI4UWdmcXBxcVRQMm42b21OUzlLSm9obmp4VDZpaVVYZExwS29nNEhhcndiUVNmdmdnWHFrTGNRVmpucjllWkYKTEhGY1hpanpVK1pES3BIT2tyNGlsc1FiOFhiT2xpK01Sa0p2OWVOdEhYajRoeVFYakpBdHdzUUhTeXdja1lYUQpGUFRFQi9IejBQUUJpTC9jaTk0dGUrWHRSNDJMNFgrZlh2eUpIOGFNQ09VMTZkaEhuUjBxOW1jLzJjTlZMYjJ0CmxOWWVWUUlEQVFBQm95TXdJVEFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QU4KQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBZ3UzSDVkRHA5d0FNZlg0V0pUSWlEGUxjTU0wSElkMFJGbDhaTU9oUgowRTB0YnUrbkduaHh0d3lIMUE5UFRjRm9pU3h1THNNNktrSWNZL1ZLallqRnBPemxXZVJuVW12WnpTdDkyaTRuCjRoa2duA8ZEa1l6bzVPb1FEF21nRXhFVlpsRnJKaXFZYjYwR3Z6Q0RHblZUc3ljT2xqaVJmeGdWSFQvR8t6bkEKbG9scTY4Z2VlVGFZMWZjdWZTK3FPcHBKcm9CNjZvZENtenhuMExVZE4yRU9ucDJYZUdIZ0hjRzRFcFVXODdXcQpJZVZTTkY3SDFIYVlqY0Z2ZD3SZHFseVVpRjkvaWwxMFJYVHTSbzNPa3loZ3BzWnPUNWRBTk9jOXA0M0MKNHF0CjNwZDJvN2hHRGxVc3g4cFpsaZZHamo4ZA8rVy9qRXY1K1VTQzVPQ09kRHJJU2c9PQotLS0tLUVORCBDRVJUSUZMR0FUSS0tBT0t
         directConnection: false
         skipTlsVerify: true
-        namespace: "{{ .Base.Namespace }}"
-        jenkinsUrl: "http://{{ .Base.DeploymentName }}:8080"
+        namespace: "demo"
+        jenkinsUrl: "http://jenkins-controller:8080"
         maxRequestsPerHostStr: 64
         retentionTimeout: 5
         connectTimeout: 10
         readTimeout: 20
         templates:
-{{ .JCasc.Clouds.Kubernetes.Templates.AdditionalCloudTemplates }}
+          
+          # POD with gradle and java. Define "gradle_java" as agent label to use this POD in your pipeline
+          # This POD inherits from 'pipeline-base-container', which results in parallel deployment of all containers.
+          # With this, all containers, that are defined under 'pipeline-base-container' can also be used in the pipeline.
+          - name: "gradle_java"
+            serviceAccount: "jenkins-controller-agent"
+            instanceCap: 10
+            idleMinutes: 0
+            slaveConnectTimeout: "500"
+            label: "gradle_java"
+            inheritFrom: "pipeline-base-container"
+            imagePullSecrets:
+              - name: docker-registry-credentialsid
+            containers:
+              # add container with the name 'gradle'. This can be used in the pipeline to execute commands on this container
+              - name: "gradle"
+                image: "gradle:latest"
+                privileged: false
+                alwaysPullImage: true
+                workingDir: "/home/jenkins/agent"
+                runAsUser: "1000"
+                runAsGroup: "1000"
+                command: ""
+                args: ""
+                ttyEnabled: true
+                resourceRequestCpu: "500m"
+                resourceLimitCpu: "3000m"
+                resourceRequestMemory: "500Mi"
+                resourceLimitMemory: "2Gi"
+                envVars:
+                  - secretEnvVar:
+                      key: 'ORG_GRADLE_PROJECT_mavenUser'
+                      secretName: 'repository-credentialsid'
+                      secretKey: 'username'
+                  - secretEnvVar:
+                      key: 'ORG_GRADLE_PROJECT_mavenPassword'
+                      secretName: 'repository-credentialsid'
+                      secretKey: 'password'
+          # POD with npm. Define "node" as agent label to use this POD in your pipeline
+          # This POD inherits from 'pipeline-base-container', which results in parallel deployment of all containers.
+          # With this, all containers, that are defined under 'pipeline-base-container' can also be used in the pipeline.
+          - name: "node"
+            serviceAccount: "jenkins-controller-agent"
+            instanceCap: 10
+            idleMinutes: 0
+            slaveConnectTimeout: "500"
+            label: "node"
+            inheritFrom: "pipeline-base-container"
+            imagePullSecrets:
+              - name: docker-registry-credentialsid
+            containers:
+              - name: "node"
+                image: "node:latest"
+                privileged: false
+                alwaysPullImage: true
+                workingDir: "/home/jenkins/agent"
+                runAsUser: "1000"
+                runAsGroup: "1000"
+                command: ""
+                args: ""
+                ttyEnabled: true
+                resourceRequestCpu: "500m"
+                resourceLimitCpu: "2000m"
+                resourceRequestMemory: "500Gi"
+                resourceLimitMemory: "2Gi"
+                envVars:
+                  - secretEnvVar:
+                      key: 'NPM_USERNAME'
+                      secretName: 'repository-credentialsid'
+                      secretKey: 'username'
+                  - secretEnvVar:
+                      key: 'NPM_PASSWORD'
+                      secretName: 'repository-credentialsid'
+                      secretKey: 'password'
           # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
           # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
           # this POD.
           - name: "pipeline-base-container"
-            serviceAccount: "{{ .Base.DeploymentName }}-agent"
+            serviceAccount: "jenkins-controller-agent"
             instanceCap: 10
             idleMinutes: 0
             slaveConnectTimeout: "500"
             label: "pipeline-base-container"
             imagePullSecrets:
-              - name: {{ .JCasc.CredentialIDs.DockerRegistryCredentialsID }}
+              - name: docker-registry-credentialsid
             # add the Docker sockets to the hostPathVolume, that we can use docker commands
             volumes:
               - hostPathVolume:
@@ -89,7 +162,7 @@ jenkins:
               # You also can try to bring the rootless container up to life, but this is more tricky.
               # With this special configuration the other build containers do not need root or privileged deployments.
               - name: "docker"
-                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-docker:latest"
+                image: "docker:latest"
                 privileged: true
                 alwaysPullImage: true
                 workingDir: "/home/jenkins/agent"
@@ -106,17 +179,17 @@ jenkins:
             envVars:
               - envVar:
                   key: "JENKINS_URL"
-                  value: "http://{{ .Base.DeploymentName }}:8080{{ .Base.JenkinsUriPrefix }}"
+                  value: "http://jenkins-controller:8080/jenkins"
               - envVar:
                   key: "JENKINS_TUNNEL"
-                  value: "{{ .Base.DeploymentName }}-agent:50000"
+                  value: "jenkins-controller-agent:50000"
 
 # JcasC configuration for unclassified plugins
 unclassified:
   # URL under which the Jenkins is reachable.
   # This URL will also be used for notifying the VCS like Github or Bitbucket to link to build number results.
   location:
-    url: "http://{{ .Base.JenkinsURL }}{{ .Base.JenkinsUriPrefix }}"
+    url: "http://10.15.15.1/jenkins"
 
   # Definition of the metrics plugin to monitor Jenkins via Prometheus
   metricsaccesskey:
@@ -144,7 +217,7 @@ unclassified:
               git:
                 id: "my-pipeline-library"
                 remote: "https://github.com/Ragin-LundF/k8s-jcasc-pipeline-library.git"
-                credentialsId: "{{ .JCasc.CredentialIDs.VcsRepositoryCredentialsID }}"
+                credentialsId: "vcs-notification-credentialsid"
 
   # Definition of a sonar server if required
   sonarglobalconfiguration:
@@ -163,7 +236,7 @@ unclassified:
           skipScmCause: false
           skipUpstreamCause: false
 
-{{ if .JCasc.JobsConfig.JobsAvailable }}
+
 # JobDSL definition of the seed-job.
 # This job creates all other jobs from a Bitbucket repository.
 # With this mechanism, it is possible to have a simple job definition in your VCS and there is no need to make
@@ -172,7 +245,7 @@ unclassified:
 jobs:
   - script: >
       job('seed_job') {
-          label('{{ .JenkinsHelmValues.Controller.CustomJenkinsLabels }}')
+          label('jenkins-controller-for-seed')
           logRotator {
               numToKeep(5)
               artifactNumToKeep(1)
@@ -180,8 +253,8 @@ jobs:
           multiscm {
               git {
                   remote {
-                      url('{{ .JCasc.JobsConfig.JobsSeedRepository}}')
-                      credentials("{{ .JCasc.CredentialIDs.VcsRepositoryCredentialsID }}")
+                      url('https://github.com/Ragin-LundF/jenkins-jobdsl-remote.git')
+                      credentials("vcs-notification-credentialsid")
                   }
                   extensions {
                     relativeTargetDirectory('jobdslscript')
@@ -189,8 +262,8 @@ jobs:
               }
               git {
                   remote {
-                      url('{{ .JCasc.JobsConfig.JobsDefinitionRepository }}')
-                      credentials("{{ .JCasc.CredentialIDs.VcsRepositoryCredentialsID }}")
+                      url('https://github.com/Ragin-LundF/k8s-jcasc-mgmt-example.git')
+                      credentials("vcs-notification-credentialsid")
                   }
                   extensions {
                     relativeTargetDirectory('jobdefinition')
@@ -207,4 +280,3 @@ jobs:
               scm('* * * * *')
           }
       }
-{{ end }}

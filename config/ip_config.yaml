@@ -7,3 +7,6 @@ k8sManagement:
             - ipAddress: 192.168.178.252
               namespace: example-project-dynamic
               domain: example-project.domain.tld
+            - ipAddress: 10.15.15.1
+              namespace: demo
+              domain: demodomain.tld
