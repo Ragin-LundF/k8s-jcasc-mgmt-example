@@ -1,14 +1,13 @@
 {
   "multiBranchJobs": [
     {
-      "jobName": "myMultibranchJob",
-      "jobDescription": "This is a test job",
+      "jobName": "K8S JCasC Example",
+      "jobDescription": "K8S JCasC Example project",
       "pipelineScriptPath": "Jenkinsfile",
       "git": {
-        "repositoryId": "myMultibranchJobId",
-        "repositoryUrl": "https://github.com/myProjects/myMultibranchProject.git",
-        "repositoryTrigger": "* * * * *",
-        "credentialsId": "myGitCredentialsId"
+        "repositoryId": "k8s-jcasc-app-example",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-app-example.git",
+        "repositoryTrigger": "* * * * *"
       }
     }
   ]
