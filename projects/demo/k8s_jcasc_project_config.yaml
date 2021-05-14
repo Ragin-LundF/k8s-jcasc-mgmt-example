@@ -11,6 +11,8 @@ jcasc:
             templates:
                 additionalCloudTemplateFiles:
                     - gradle_java_demo.yaml
+                    - gradle_java.yaml
+                    - node.yaml
     credentialIDs:
         #docker: docker-registry-credentialsid
         #maven: repository-credentialsid
