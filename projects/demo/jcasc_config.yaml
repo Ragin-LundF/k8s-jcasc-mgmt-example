@@ -55,136 +55,123 @@ jenkins:
           # POD with gradle and java. Define "gradle_java" as agent label to use this POD in your pipeline
           # This POD inherits from 'pipeline-base-container', which results in parallel deployment of all containers.
           # With this, all containers, that are defined under 'pipeline-base-container' can also be used in the pipeline.
-          - name: "gradle_java"
-            serviceAccount: "jenkins-controller-agent"
-            instanceCap: 10
-            idleMinutes: 0
-            slaveConnectTimeout: "500"
-            label: "gradle_java"
-            inheritFrom: "pipeline-base-container"
-            imagePullSecrets:
-              - name: docker-registry-credentialsid
-            containers:
-              # add container with the name 'gradle'. This can be used in the pipeline to execute commands on this container
-              - name: "gradle"
-                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-java-gradle:latest"
-                privileged: false
-                alwaysPullImage: true
-                workingDir: "/home/jenkins/agent"
-                runAsUser: "1000"
-                runAsGroup: "1000"
-                command: ""
-                args: ""
-                ttyEnabled: true
-                resourceRequestCpu: "500m"
-                resourceLimitCpu: "3000m"
-                resourceRequestMemory: "500Mi"
-                resourceLimitMemory: "2Gi"
-                envVars:
-                  - secretEnvVar:
-                      key: 'ORG_GRADLE_PROJECT_mavenUser'
-                      secretName: 'repository-credentialsid'
-                      secretKey: 'username'
-                  - secretEnvVar:
-                      key: 'ORG_GRADLE_PROJECT_mavenPassword'
-                      secretName: 'repository-credentialsid'
-                      secretKey: 'password'
-          # POD with npm. Define "node" as agent label to use this POD in your pipeline
-          # This POD inherits from 'pipeline-base-container', which results in parallel deployment of all containers.
-          # With this, all containers, that are defined under 'pipeline-base-container' can also be used in the pipeline.
-          - name: "node"
-            serviceAccount: "jenkins-controller-agent"
-            instanceCap: 10
-            idleMinutes: 0
-            slaveConnectTimeout: "500"
-            label: "node"
-            inheritFrom: "pipeline-base-container"
-            imagePullSecrets:
-              - name: docker-registry-credentialsid
-            containers:
-              - name: "node"
-                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
-                privileged: false
-                alwaysPullImage: true
-                workingDir: "/home/jenkins/agent"
-                runAsUser: "1000"
-                runAsGroup: "1000"
-                command: ""
-                args: ""
-                ttyEnabled: true
-                resourceRequestCpu: "500m"
-                resourceLimitCpu: "2000m"
-                resourceRequestMemory: "500Gi"
-                resourceLimitMemory: "2Gi"
-                envVars:
-                  - secretEnvVar:
-                      key: 'NPM_USERNAME'
-                      secretName: 'repository-credentialsid'
-                      secretKey: 'username'
-                  - secretEnvVar:
-                      key: 'NPM_PASSWORD'
-                      secretName: 'repository-credentialsid'
-                      secretKey: 'password'
-          # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
-          # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
-          # this POD.
-          - name: "pipeline-base-container"
-            serviceAccount: "jenkins-controller-agent"
-            instanceCap: 10
-            idleMinutes: 0
-            slaveConnectTimeout: "500"
-            label: "pipeline-base-container"
-            imagePullSecrets:
-              - name: docker-registry-credentialsid
-            # add the Docker sockets to the hostPathVolume, that we can use docker commands
-            volumes:
-              - hostPathVolume:
-                  mountPath: "/var/run/docker.sock"
-                  hostPath: "/var/run/docker.sock"
-            containers:
-              # If you want to have all deployed build container under your control, you need a JNLP container with the name "jnlp".
-              # This is required by the kubernetes plugin of Jenkins.
-              # By defining this container here and doing always an 'inheritFrom: "pipeline-base-container"', it is possible to add
-              # an own image here, that is located in an private registry to have the full control over the used containers and their versions.
-              - name: "jnlp"
-                image: "jenkins/jnlp-slave:latest"
-                privileged: false
-                alwaysPullImage: true
-                workingDir: "/home/jenkins/agent"
-                runAsUser: "1000"
-                runAsGroup: "1000"
-                command: ""
-                args: ""
-                ttyEnabled: true
-                resourceRequestCpu: "200m"
-                resourceLimitCpu: "500m"
-                resourceRequestMemory: "256Mi"
-                resourceLimitMemory: "1Gi"
-              # It is recommended to deploy Docker in a separate container, because it needs privileged execution and root.
-              # You also can try to bring the rootless container up to life, but this is more tricky.
-              # With this special configuration the other build containers do not need root or privileged deployments.
-              - name: "docker"
-                image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-docker:latest"
-                privileged: true
-                alwaysPullImage: true
-                workingDir: "/home/jenkins/agent"
-                runAsUser: "0"
-                runAsGroup: "0"
-                command: ""
-                args: ""
-                ttyEnabled: true
-                resourceRequestCpu: "500m"
-                resourceLimitCpu: "1500m"
-                resourceRequestMemory: "500Mi"
-                resourceLimitMemory: "2Gi"
-            # Those variables are required for the communication with the agents
-            envVars:
-              - envVar:
-                  key: "JENKINS_URL"
-                  value: "http://jenkins-controller:8080/jenkins"
-              - envVar:
-                  key: "JENKINS_TUNNEL"
-                  value: "jenkins-controller-agent:50000"
+  - name: "gradle_java_node"
+    serviceAccount: "{{ .Base.DeploymentName }}-agent"
+    instanceCap: 10
+    idleMinutes: 0
+    slaveConnectTimeout: "500"
+    label: "gradle_java_node"
+    inheritFrom: "pipeline-base-container"
+    imagePullSecrets:
+      - name: {{ .JCasc.CredentialIDs.DockerRegistryCredentialsID }}
+    containers:
+      # add container with the name 'gradle'. This can be used in the pipeline to execute commands on this container
+      - name: "gradle"
+        image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-java-gradle:latest"
+        privileged: false
+        alwaysPullImage: true
+        workingDir: "/home/jenkins/agent"
+        runAsUser: "1000"
+        runAsGroup: "1000"
+        command: ""
+        args: ""
+        ttyEnabled: true
+        resourceRequestCpu: "500m"
+        resourceLimitCpu: "3000m"
+        resourceRequestMemory: "500Mi"
+        resourceLimitMemory: "2Gi"
+        envVars:
+          - secretEnvVar:
+              key: 'ORG_GRADLE_PROJECT_mavenUser'
+              secretName: '{{ .JCasc.CredentialIDs.MavenRepositorySecretsCredentialsID }}'
+              secretKey: 'username'
+          - secretEnvVar:
+              key: 'ORG_GRADLE_PROJECT_mavenPassword'
+              secretName: '{{ .JCasc.CredentialIDs.MavenRepositorySecretsCredentialsID }}'
+              secretKey: 'password'
+      - name: "node"
+        image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
+        privileged: false
+        alwaysPullImage: true
+        workingDir: "/home/jenkins/agent"
+        runAsUser: "1000"
+        runAsGroup: "1000"
+        command: ""
+        args: ""
+        ttyEnabled: true
+        resourceRequestCpu: "500m"
+        resourceLimitCpu: "2000m"
+        resourceRequestMemory: "500Gi"
+        resourceLimitMemory: "2Gi"
+        envVars:
+          - secretEnvVar:
+              key: 'NPM_USERNAME'
+              secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
+              secretKey: 'username'
+          - secretEnvVar:
+              key: 'NPM_PASSWORD'
+              secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
+              secretKey: 'password'
+      # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
+      # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
+      # this POD.
+      - name: "pipeline-base-container"
+        serviceAccount: "jenkins-controller-agent"
+        instanceCap: 10
+        idleMinutes: 0
+        slaveConnectTimeout: "500"
+        label: "pipeline-base-container"
+        imagePullSecrets:
+          - name: docker-registry-credentialsid
+        # add the Docker sockets to the hostPathVolume, that we can use docker commands
+        volumes:
+          - hostPathVolume:
+              mountPath: "/var/run/docker.sock"
+              hostPath: "/var/run/docker.sock"
+        containers:
+          # If you want to have all deployed build container under your control, you need a JNLP container with the name "jnlp".
+          # This is required by the kubernetes plugin of Jenkins.
+          # By defining this container here and doing always an 'inheritFrom: "pipeline-base-container"', it is possible to add
+          # an own image here, that is located in an private registry to have the full control over the used containers and their versions.
+          - name: "jnlp"
+            image: "jenkins/jnlp-slave:latest"
+            privileged: false
+            alwaysPullImage: true
+            workingDir: "/home/jenkins/agent"
+            runAsUser: "1000"
+            runAsGroup: "1000"
+            command: ""
+            args: ""
+            ttyEnabled: true
+            resourceRequestCpu: "200m"
+            resourceLimitCpu: "500m"
+            resourceRequestMemory: "256Mi"
+            resourceLimitMemory: "1Gi"
+          # It is recommended to deploy Docker in a separate container, because it needs privileged execution and root.
+          # You also can try to bring the rootless container up to life, but this is more tricky.
+          # With this special configuration the other build containers do not need root or privileged deployments.
+          - name: "docker"
+            image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-docker:latest"
+            privileged: true
+            alwaysPullImage: true
+            workingDir: "/home/jenkins/agent"
+            runAsUser: "0"
+            runAsGroup: "0"
+            command: ""
+            args: ""
+            ttyEnabled: true
+            resourceRequestCpu: "500m"
+            resourceLimitCpu: "1500m"
+            resourceRequestMemory: "500Mi"
+            resourceLimitMemory: "2Gi"
+        # Those variables are required for the communication with the agents
+        envVars:
+          - envVar:
+              key: "JENKINS_URL"
+              value: "http://jenkins-controller:8080/jenkins"
+          - envVar:
+              key: "JENKINS_TUNNEL"
+              value: "jenkins-controller-agent:50000"
 
 # JcasC configuration for unclassified plugins
 unclassified:

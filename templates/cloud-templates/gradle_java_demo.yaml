@@ -1,12 +1,12 @@
 # POD with gradle and java. Define "gradle_java" as agent label to use this POD in your pipeline
 # This POD inherits from 'pipeline-base-container', which results in parallel deployment of all containers.
 # With this, all containers, that are defined under 'pipeline-base-container' can also be used in the pipeline.
-- name: "gradle_java"
+- name: "gradle_java_node"
   serviceAccount: "{{ .Base.DeploymentName }}-agent"
   instanceCap: 10
   idleMinutes: 0
   slaveConnectTimeout: "500"
-  label: "gradle_java"
+  label: "gradle_java_node"
   inheritFrom: "pipeline-base-container"
   imagePullSecrets:
     - name: {{ .JCasc.CredentialIDs.DockerRegistryCredentialsID }}
@@ -34,4 +34,27 @@
         - secretEnvVar:
             key: 'ORG_GRADLE_PROJECT_mavenPassword'
             secretName: '{{ .JCasc.CredentialIDs.MavenRepositorySecretsCredentialsID }}'
+            secretKey: 'password'
+    - name: "node"
+      image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
+      privileged: false
+      alwaysPullImage: true
+      workingDir: "/home/jenkins/agent"
+      runAsUser: "1000"
+      runAsGroup: "1000"
+      command: ""
+      args: ""
+      ttyEnabled: true
+      resourceRequestCpu: "500m"
+      resourceLimitCpu: "2000m"
+      resourceRequestMemory: "500Gi"
+      resourceLimitMemory: "2Gi"
+      envVars:
+        - secretEnvVar:
+            key: 'NPM_USERNAME'
+            secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
+            secretKey: 'username'
+        - secretEnvVar:
+            key: 'NPM_PASSWORD'
+            secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
             secretKey: 'password'
