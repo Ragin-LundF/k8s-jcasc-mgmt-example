@@ -52,14 +52,12 @@ jenkins:
         readTimeout: 20
         templates:
           - name: "gradle_java_node"
-            serviceAccount: "{{ .Base.DeploymentName }}-agent"
+            serviceAccount: "jenkins-controller-agent"
             instanceCap: 10
             idleMinutes: 0
             slaveConnectTimeout: "500"
             label: "gradle_java_node"
             inheritFrom: "pipeline-base-container"
-            imagePullSecrets:
-              - name: { { .JCasc.CredentialIDs.DockerRegistryCredentialsID } }
             containers:
               # add container with the name 'gradle'. This can be used in the pipeline to execute commands on this container
               - name: "gradle"
@@ -79,11 +77,11 @@ jenkins:
                 envVars:
                   - secretEnvVar:
                       key: 'ORG_GRADLE_PROJECT_mavenUser'
-                      secretName: '{{ .JCasc.CredentialIDs.MavenRepositorySecretsCredentialsID }}'
+                      secretName: 'mavenCredentialsIdUsername'
                       secretKey: 'username'
                   - secretEnvVar:
                       key: 'ORG_GRADLE_PROJECT_mavenPassword'
-                      secretName: '{{ .JCasc.CredentialIDs.MavenRepositorySecretsCredentialsID }}'
+                      secretName: 'mavenCredentialsIdPassword'
                       secretKey: 'password'
               - name: "node"
                 image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
@@ -102,11 +100,11 @@ jenkins:
                 envVars:
                   - secretEnvVar:
                       key: 'NPM_USERNAME'
-                      secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
+                      secretName: 'nodeCredentialsIdUsername'
                       secretKey: 'username'
                   - secretEnvVar:
                       key: 'NPM_PASSWORD'
-                      secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
+                      secretName: 'nodeCredentialsIdPassword'
                       secretKey: 'password'
 
           # POD with gradle and java. Define "gradle_java" as agent label to use this POD in your pipeline
