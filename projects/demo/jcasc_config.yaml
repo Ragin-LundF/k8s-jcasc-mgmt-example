@@ -72,8 +72,8 @@ jenkins:
                 ttyEnabled: true
                 resourceRequestCpu: "500m"
                 resourceLimitCpu: "3000m"
-                resourceRequestMemory: "500Mi"
-                resourceLimitMemory: "2Gi"
+                resourceRequestMemory: "128Mi"
+                resourceLimitMemory: "1Gi"
               - name: "node"
                 image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-node:latest"
                 privileged: false
@@ -84,10 +84,10 @@ jenkins:
                 command: ""
                 args: ""
                 ttyEnabled: true
-                resourceRequestCpu: "500m"
+                resourceRequestCpu: "100m"
                 resourceLimitCpu: "2000m"
-                resourceRequestMemory: "500Gi"
-                resourceLimitMemory: "2Gi"
+                resourceRequestMemory: "128Mi"
+                resourceLimitMemory: "500Mi"
           # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
           # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
           # this POD.
@@ -119,8 +119,8 @@ jenkins:
                 ttyEnabled: true
                 resourceRequestCpu: "200m"
                 resourceLimitCpu: "500m"
-                resourceRequestMemory: "256Mi"
-                resourceLimitMemory: "1Gi"
+                resourceRequestMemory: "128Mi"
+                resourceLimitMemory: "512Mi"
               # It is recommended to deploy Docker in a separate container, because it needs privileged execution and root.
               # You also can try to bring the rootless container up to life, but this is more tricky.
               # With this special configuration the other build containers do not need root or privileged deployments.
@@ -136,8 +136,8 @@ jenkins:
                 ttyEnabled: true
                 resourceRequestCpu: "500m"
                 resourceLimitCpu: "1500m"
-                resourceRequestMemory: "500Mi"
-                resourceLimitMemory: "2Gi"
+                resourceRequestMemory: "128Mi"
+                resourceLimitMemory: "500Mi"
             # Those variables are required for the communication with the agents
             envVars:
               - envVar:
