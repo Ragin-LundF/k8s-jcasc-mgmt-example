@@ -112,66 +112,66 @@ jenkins:
               key: 'NPM_PASSWORD'
               secretName: '{{ .JCasc.CredentialIDs.NpmRepositorySecretsCredentialsID }}'
               secretKey: 'password'
-      # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
-      # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
-      # this POD.
-      - name: "pipeline-base-container"
-        serviceAccount: "jenkins-controller-agent"
-        instanceCap: 10
-        idleMinutes: 0
-        slaveConnectTimeout: "500"
-        label: "pipeline-base-container"
-        imagePullSecrets:
-          - name: docker-registry-credentialsid
-        # add the Docker sockets to the hostPathVolume, that we can use docker commands
-        volumes:
-          - hostPathVolume:
-              mountPath: "/var/run/docker.sock"
-              hostPath: "/var/run/docker.sock"
-        containers:
-          # If you want to have all deployed build container under your control, you need a JNLP container with the name "jnlp".
-          # This is required by the kubernetes plugin of Jenkins.
-          # By defining this container here and doing always an 'inheritFrom: "pipeline-base-container"', it is possible to add
-          # an own image here, that is located in an private registry to have the full control over the used containers and their versions.
-          - name: "jnlp"
-            image: "jenkins/jnlp-slave:latest"
-            privileged: false
-            alwaysPullImage: true
-            workingDir: "/home/jenkins/agent"
-            runAsUser: "1000"
-            runAsGroup: "1000"
-            command: ""
-            args: ""
-            ttyEnabled: true
-            resourceRequestCpu: "200m"
-            resourceLimitCpu: "500m"
-            resourceRequestMemory: "256Mi"
-            resourceLimitMemory: "1Gi"
-          # It is recommended to deploy Docker in a separate container, because it needs privileged execution and root.
-          # You also can try to bring the rootless container up to life, but this is more tricky.
-          # With this special configuration the other build containers do not need root or privileged deployments.
-          - name: "docker"
-            image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-docker:latest"
-            privileged: true
-            alwaysPullImage: true
-            workingDir: "/home/jenkins/agent"
-            runAsUser: "0"
-            runAsGroup: "0"
-            command: ""
-            args: ""
-            ttyEnabled: true
-            resourceRequestCpu: "500m"
-            resourceLimitCpu: "1500m"
-            resourceRequestMemory: "500Mi"
-            resourceLimitMemory: "2Gi"
-        # Those variables are required for the communication with the agents
-        envVars:
-          - envVar:
-              key: "JENKINS_URL"
-              value: "http://jenkins-controller:8080/jenkins"
-          - envVar:
-              key: "JENKINS_TUNNEL"
-              value: "jenkins-controller-agent:50000"
+  # POD with pipeline base container. Add here container, that you need in multiple build environments (like docker).
+  # Add this name as 'inheritFrom: "pipeline-base-container"' to the other container to inherit all defined containers of
+  # this POD.
+  - name: "pipeline-base-container"
+    serviceAccount: "jenkins-controller-agent"
+    instanceCap: 10
+    idleMinutes: 0
+    slaveConnectTimeout: "500"
+    label: "pipeline-base-container"
+    imagePullSecrets:
+      - name: docker-registry-credentialsid
+    # add the Docker sockets to the hostPathVolume, that we can use docker commands
+    volumes:
+      - hostPathVolume:
+          mountPath: "/var/run/docker.sock"
+          hostPath: "/var/run/docker.sock"
+    containers:
+      # If you want to have all deployed build container under your control, you need a JNLP container with the name "jnlp".
+      # This is required by the kubernetes plugin of Jenkins.
+      # By defining this container here and doing always an 'inheritFrom: "pipeline-base-container"', it is possible to add
+      # an own image here, that is located in an private registry to have the full control over the used containers and their versions.
+      - name: "jnlp"
+        image: "jenkins/jnlp-slave:latest"
+        privileged: false
+        alwaysPullImage: true
+        workingDir: "/home/jenkins/agent"
+        runAsUser: "1000"
+        runAsGroup: "1000"
+        command: ""
+        args: ""
+        ttyEnabled: true
+        resourceRequestCpu: "200m"
+        resourceLimitCpu: "500m"
+        resourceRequestMemory: "256Mi"
+        resourceLimitMemory: "1Gi"
+      # It is recommended to deploy Docker in a separate container, because it needs privileged execution and root.
+      # You also can try to bring the rootless container up to life, but this is more tricky.
+      # With this special configuration the other build containers do not need root or privileged deployments.
+      - name: "docker"
+        image: "ghcr.io/ragin-lundf/k8s-jenkins-docker/k8s-jcasc-jenkins-build-docker:latest"
+        privileged: true
+        alwaysPullImage: true
+        workingDir: "/home/jenkins/agent"
+        runAsUser: "0"
+        runAsGroup: "0"
+        command: ""
+        args: ""
+        ttyEnabled: true
+        resourceRequestCpu: "500m"
+        resourceLimitCpu: "1500m"
+        resourceRequestMemory: "500Mi"
+        resourceLimitMemory: "2Gi"
+    # Those variables are required for the communication with the agents
+    envVars:
+      - envVar:
+          key: "JENKINS_URL"
+          value: "http://jenkins-controller:8080/jenkins"
+      - envVar:
+          key: "JENKINS_TUNNEL"
+          value: "jenkins-controller-agent:50000"
 
 # JcasC configuration for unclassified plugins
 unclassified:
