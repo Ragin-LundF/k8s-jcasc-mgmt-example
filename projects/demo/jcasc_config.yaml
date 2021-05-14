@@ -97,8 +97,6 @@ jenkins:
             idleMinutes: 0
             slaveConnectTimeout: "500"
             label: "pipeline-base-container"
-            imagePullSecrets:
-              - name: docker-registry-credentialsid
             # add the Docker sockets to the hostPathVolume, that we can use docker commands
             volumes:
               - hostPathVolume:
