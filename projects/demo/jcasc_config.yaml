@@ -39,7 +39,7 @@ jenkins:
 
   clouds:
     - kubernetes:
-        name: "jenkins-build-slaves"
+        name: "jenkins-build-nodes"
         serverUrl: ""
         serverCertificate:
         directConnection: false
