@@ -61,6 +61,10 @@ controller:
       enabled: false
       # folder in the pod that should hold the collected dashboards:
       folder: "{{ .JenkinsHelmValues.Controller.SidecarsConfigAutoReloadFolder }}"
+agent:
+  customJenkinsLabels: [
+      "{{ .JenkinsHelmValues.Controller.CustomJenkinsLabels }}"
+  ]
 
 persistence:
   existingClaim: {{ .Base.ExistingVolumeClaim }}

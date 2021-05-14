@@ -1,5 +1,7 @@
 jenkins:
   systemMessage: "Welcome to the Demo"
+  labelString: "jenkins-controller-for-seed"
+  mode: "EXCLUSIVE"
 
   authorizationStrategy:
     roleBased:

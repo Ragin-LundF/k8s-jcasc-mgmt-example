@@ -1,5 +1,7 @@
 jenkins:
   systemMessage: "{{ .JCasc.SystemMessage }}"
+  labelString: "{{ .JenkinsHelmValues.Controller.CustomJenkinsLabels }}"
+  mode: "EXCLUSIVE"
 
   authorizationStrategy:
     roleBased:
