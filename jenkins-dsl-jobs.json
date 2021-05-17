@@ -3,11 +3,122 @@
     {
       "jobName": "K8S JCasC Example",
       "jobDescription": "K8S JCasC Example project",
+      "view": "Demo build",
       "pipelineScriptPath": "Jenkinsfile",
       "git": {
         "repositoryId": "k8s-jcasc-app-example",
         "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-app-example.git",
         "repositoryTrigger": "* * * * *"
+      }
+    }
+  ],
+  "pipelineJobs": [
+    {
+      "jobName": "Deploy DEMO dev",
+      "jobDescription": "Deployment of the demo dev environment",
+      "view": "Demo deploy",
+      "pipelineScriptPath": "Jenkinsfile",
+      "cronTrigger": "* * * * *",
+      "remoteTriggerUuid": "deploy-demo-dev",
+      "remoteBranchName": "dev",
+      "git": {
+        "repositoryId": "deploy-demo-dev",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-deploy-helmfile-example.git",
+        "repositoryTrigger": "* * * * *"
+      },
+      "logRotator": {
+        "daysToKeep": 2,
+        "numToKeep": 5
+      }
+    },
+    {
+      "jobName": "Deploy DEMO qa",
+      "jobDescription": "Deployment of the demo qa environment",
+      "view": "Demo deploy",
+      "pipelineScriptPath": "Jenkinsfile",
+      "cronTrigger": "* * * * *",
+      "remoteTriggerUuid": "deploy-demo-qa",
+      "remoteBranchName": "qa",
+      "git": {
+        "repositoryId": "deploy-demo-qa",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-deploy-helmfile-example.git",
+        "repositoryTrigger": "* * * * *"
+      },
+      "logRotator": {
+        "daysToKeep": 2,
+        "numToKeep": 5
+      }
+    },
+    {
+      "jobName": "Deploy DEMO preview",
+      "jobDescription": "Deployment of the demo preview environment",
+      "view": "Demo deploy",
+      "pipelineScriptPath": "Jenkinsfile",
+      "cronTrigger": "* * * * *",
+      "remoteTriggerUuid": "deploy-demo-preview",
+      "remoteBranchName": "preview",
+      "git": {
+        "repositoryId": "deploy-demo-preview",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-deploy-helmfile-example.git",
+        "repositoryTrigger": "* * * * *"
+      },
+      "logRotator": {
+        "daysToKeep": 2,
+        "numToKeep": 5
+      }
+    },
+    {
+      "jobName": "Undeploy DEMO dev",
+      "jobDescription": "Deployment of the demo dev environment",
+      "view": "Demo deploy",
+      "pipelineScriptPath": "Jenkinsfile.undeploy",
+      "cronTrigger": "* * * * *",
+      "remoteTriggerUuid": "deploy-demo-dev",
+      "remoteBranchName": "dev",
+      "git": {
+        "repositoryId": "deploy-demo-dev",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-deploy-helmfile-example.git",
+        "repositoryTrigger": "* * * * *"
+      },
+      "logRotator": {
+        "daysToKeep": 2,
+        "numToKeep": 5
+      }
+    },
+    {
+      "jobName": "Undeploy DEMO qa",
+      "jobDescription": "Deployment of the demo qa environment",
+      "view": "Demo deploy",
+      "pipelineScriptPath": "Jenkinsfile.undeploy",
+      "cronTrigger": "* * * * *",
+      "remoteTriggerUuid": "deploy-demo-qa",
+      "remoteBranchName": "qa",
+      "git": {
+        "repositoryId": "deploy-demo-qa",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-deploy-helmfile-example.git",
+        "repositoryTrigger": "* * * * *"
+      },
+      "logRotator": {
+        "daysToKeep": 2,
+        "numToKeep": 5
+      }
+    },
+    {
+      "jobName": "Undeploy DEMO preview",
+      "jobDescription": "Deployment of the demo preview environment",
+      "view": "Demo deploy",
+      "pipelineScriptPath": "Jenkinsfile.undeploy",
+      "cronTrigger": "* * * * *",
+      "remoteTriggerUuid": "deploy-demo-preview",
+      "remoteBranchName": "preview",
+      "git": {
+        "repositoryId": "deploy-demo-preview",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-deploy-helmfile-example.git",
+        "repositoryTrigger": "* * * * *"
+      },
+      "logRotator": {
+        "daysToKeep": 2,
+        "numToKeep": 5
       }
     }
   ]
