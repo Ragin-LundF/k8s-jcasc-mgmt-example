@@ -19,7 +19,7 @@
       "view": "Demo deploy",
       "pipelineScriptPath": "Jenkinsfile.groovy",
       "cronTrigger": "* * * * *",
-      "remoteTriggerUuid": "deploy-demo-dev",
+      "remoteTriggerUuid": "6f33625a-667e-4043-97f5-a8341eb3fa4b",
       "remoteBranchName": "dev",
       "git": {
         "repositoryId": "deploy-demo-dev",
@@ -37,7 +37,7 @@
       "view": "Demo deploy",
       "pipelineScriptPath": "Jenkinsfile.groovy",
       "cronTrigger": "* * * * *",
-      "remoteTriggerUuid": "deploy-demo-qa",
+      "remoteTriggerUuid": "28d29593-79f8-4d4a-a05b-2bf345316807",
       "remoteBranchName": "qa",
       "git": {
         "repositoryId": "deploy-demo-qa",
@@ -55,7 +55,7 @@
       "view": "Demo deploy",
       "pipelineScriptPath": "Jenkinsfile.groovy",
       "cronTrigger": "* * * * *",
-      "remoteTriggerUuid": "deploy-demo-preview",
+      "remoteTriggerUuid": "c0aa4635-2424-42f4-88b2-706d3663ff68",
       "remoteBranchName": "preview",
       "git": {
         "repositoryId": "deploy-demo-preview",
@@ -73,7 +73,7 @@
       "view": "Demo deploy",
       "pipelineScriptPath": "Jenkinsfile.undeploy.groovy",
       "cronTrigger": "* * * * *",
-      "remoteTriggerUuid": "deploy-demo-dev",
+      "remoteTriggerUuid": "e858d2ac-e4b7-45ff-827c-8ce58e9f7dea",
       "remoteBranchName": "dev",
       "git": {
         "repositoryId": "deploy-demo-dev",
@@ -91,7 +91,7 @@
       "view": "Demo deploy",
       "pipelineScriptPath": "Jenkinsfile.undeploy.groovy",
       "cronTrigger": "* * * * *",
-      "remoteTriggerUuid": "deploy-demo-qa",
+      "remoteTriggerUuid": "f8bedf28-4ced-4378-a7ed-b0fc547bb756",
       "remoteBranchName": "qa",
       "git": {
         "repositoryId": "deploy-demo-qa",
@@ -109,7 +109,7 @@
       "view": "Demo deploy",
       "pipelineScriptPath": "Jenkinsfile.undeploy.groovy",
       "cronTrigger": "* * * * *",
-      "remoteTriggerUuid": "deploy-demo-preview",
+      "remoteTriggerUuid": "4d166db8-beb7-4689-b828-b2a0d9bc1daf",
       "remoteBranchName": "preview",
       "git": {
         "repositoryId": "deploy-demo-preview",
