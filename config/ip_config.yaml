@@ -10,3 +10,6 @@ k8sManagement:
             - ipAddress: 10.15.15.1
               namespace: demo
               domain: demodomain.tld
+            - ipAddress: 10.15.15.2
+              namespace: demo-dev
+              domain: demo-devdomain.tld
