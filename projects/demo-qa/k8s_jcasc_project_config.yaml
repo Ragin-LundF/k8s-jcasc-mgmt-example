@@ -51,7 +51,7 @@ nginx:
         ports:
             http:
                 port: 8081
-                targetPort: 8081
+                targetPort: 80
             https:
                 port: 8444
-                targetPort: 8444
+                targetPort: 443
