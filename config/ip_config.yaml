@@ -13,3 +13,6 @@ k8sManagement:
             - ipAddress: 10.15.15.2
               namespace: demo-dev
               domain: demo-devdomain.tld
+            - ipAddress: 10.15.15.3
+              namespace: demo-qa
+              domain: demo-qadomain.tld
