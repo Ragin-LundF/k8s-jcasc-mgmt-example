@@ -10,6 +10,17 @@
         "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-app-example.git",
         "repositoryTrigger": "* * * * *"
       }
+    },
+    {
+      "jobName": "K8S JCasC Example 2",
+      "jobDescription": "K8S JCasC Example project",
+      "view": "Demo build second",
+      "pipelineScriptPath": "Jenkinsfile",
+      "git": {
+        "repositoryId": "k8s-jcasc-app-example",
+        "repositoryUrl": "https://github.com/Ragin-LundF/k8s-jcasc-2app-example.git",
+        "repositoryTrigger": "* * * * *"
+      }
     }
   ],
   "pipelineJobs": [
