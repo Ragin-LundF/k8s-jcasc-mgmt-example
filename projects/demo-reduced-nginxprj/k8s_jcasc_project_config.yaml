@@ -1,0 +1,24 @@
+base:
+    deploymentName: jenkins-controller
+    domain: demo-reduced-nginxprj.devdomain.tld
+    jenkinsURIPrefix: /jenkins
+    namespace: demo-reduced-nginxprj
+    deploymentOnly: true
+nginx:
+    ingress:
+        annotationIngressClass: nginx
+        deploymentName: nginx-ingress
+        containerImage: bitnami/nginx-ingress-controller:latest
+        enableControllerForNamespace: true
+    loadBalancer:
+        enabled: true
+        annotations:
+            externalDNSHostName: domain.tld
+            externalDNSTtl: 60
+        ports:
+            http:
+                port: 8080
+                targetPort: 80
+            https:
+                port: 8443
+                targetPort: 443

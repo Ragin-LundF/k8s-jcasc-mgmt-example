@@ -17,3 +17,4 @@ k8sManagement:
               namespace: demo-qa
               domain: demo-qadomain.tld
             - namespace: demo-nginx
+            - namespace: demo-reduced-nginxprj
