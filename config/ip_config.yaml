@@ -16,3 +16,4 @@ k8sManagement:
             - ipAddress: 10.15.15.3
               namespace: demo-qa
               domain: demo-qadomain.tld
+            - namespace: demo-nginx

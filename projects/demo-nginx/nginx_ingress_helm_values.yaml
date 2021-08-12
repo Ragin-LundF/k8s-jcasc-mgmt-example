@@ -1,0 +1,25 @@
+k8sJenkinsMgmt:
+  ingress:
+    annotationIngressClass: nginx
+    namespace: demo-nginx
+    loadbalancerIp: 192.168.178.252
+    deploymentName: nginx-ingress
+    jenkinsDeploymentName: jenkins-controller
+    jenkinsUriPrefix: /jenkins
+    containerImage: bitnami/nginx-ingress-controller:latest
+    imagePullSecrets: 
+    controllerForNamespace:
+      enabled: true
+  loadbalancer:
+    enabled: true
+    ports:
+      http:
+        port: 80
+        targetPort: 80
+      https:
+        port: 443
+        targetPort: 443
+    annotations:
+      enabled: false
+      external_dns_hostname: "192.168.178.252"
+      external_dns_ttl: 60
